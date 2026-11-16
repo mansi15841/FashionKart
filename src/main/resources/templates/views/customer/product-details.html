@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FashionKart - Product Details</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+          rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Satisfy&display=swap"
+          rel="stylesheet">
+
+    <!-- Product Details CSS -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<!-- Navbar -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<!-- =====================================================
+     PRODUCT DETAILS
+     ===================================================== -->
+
+<section class="fk-product-section">
+    <div class="container">
+
+        <!-- Breadcrumb -->
+        <nav class="fk-breadcrumb" aria-label="breadcrumb">
+            <a th:href="@{/}">Home</a>
+            <span>/</span>
+            <a th:href="@{/products}">Shop</a>
+            <span>/</span>
+            <span>Product Details</span>
+        </nav>
+
+        <!-- Main Product Layout -->
+        <div class="fk-product-layout">
+
+            <!-- LEFT: PRODUCT GALLERY -->
+            <div class="fk-gallery">
+
+                <!-- Thumbnails -->
+                <div class="fk-thumbnails">
+                    <div class="fk-thumbnail"
+                         th:each="image, iterStat : ${product.images}"
+                         th:classappend="${iterStat.first} ? ' active' : ''">
+
+                        <img th:src="@{${image.imagePath}}"
+                             alt="Product Image">
+                    </div>
+                </div>
+
+                <!-- Main Image -->
+                <div class="fk-main-image">
+                    <img id="fk-main-product-image"
+                         th:src="@{${product.images[0].imagePath}}"
+                         alt="Product Image">
+                </div>
+
+            </div>
+
+            <!-- RIGHT: PRODUCT INFORMATION -->
+            <div class="fk-product-info">
+
+                <!-- Brand -->
+                <p class="fk-brand" th:text="${product.brand}">
+                    BRAND
+                </p>
+
+                <!-- Product Name -->
+                <h1 class="fk-product-name"
+                    th:text="${product.productName}">
+                    Product Name
+                </h1>
+
+                <!-- Price -->
+                <div class="fk-price-row">
+
+                    <span class="fk-current-price"
+                          th:text="'₹' + ${product.price}">
+                    </span>
+
+                    <span class="fk-original-price"
+                          th:if="${product.discount > 0}"
+                          th:text="'₹' + (${product.price} / (1 - ${product.discount} / 100))">
+                    </span>
+
+                    <span class="fk-discount"
+                          th:if="${product.discount > 0}"
+                          th:text="${product.discount} + '% OFF'">
+                    </span>
+
+                </div>
+
+                <p class="fk-tax-note">Inclusive of all taxes</p>
+
+                <div class="fk-divider"></div>
+
+                <!-- COLOR -->
+                <div class="fk-option fk-color-option">
+
+                    <span class="fk-option-label">Color</span>
+
+                    <div class="fk-color-display">
+
+                        <span class="fk-color-circle"
+                              id="productColorCircle">
+                        </span>
+
+                        <span class="fk-color-value"
+                              id="productColorName"
+                              th:text="${product.color}">
+                        </span>
+
+                    </div>
+                </div>
+
+                <!-- SIZE -->
+                <div class="fk-option">
+
+                    <div class="fk-size-header">
+                        <span class="fk-option-label">Select Size</span>
+                        <a href="#">Size Guide</a>
+                    </div>
+
+                    <div class="fk-size-options">
+
+                        <!-- XS -->
+                        <button type="button"
+                                class="fk-size-button"
+                                data-size="XS"
+                                th:classappend="${product.sizes.?[size == 'XS'].isEmpty() or product.sizes.?[size == 'XS'][0].stockQuantity == 0} ? ' out-of-stock' : ''"
+                                th:attr="data-stock=${product.sizes.?[size == 'XS'].isEmpty() ? 0 : product.sizes.?[size == 'XS'][0].stockQuantity}"
+                                th:disabled="${product.sizes.?[size == 'XS'].isEmpty() or product.sizes.?[size == 'XS'][0].stockQuantity == 0}">
+                            XS
+                        </button>
+
+                        <!-- S -->
+                        <button type="button"
+                                class="fk-size-button"
+                                data-size="S"
+                                th:classappend="${product.sizes.?[size == 'S'].isEmpty() or product.sizes.?[size == 'S'][0].stockQuantity == 0} ? ' out-of-stock' : ''"
+                                th:attr="data-stock=${product.sizes.?[size == 'S'].isEmpty() ? 0 : product.sizes.?[size == 'S'][0].stockQuantity}"
+                                th:disabled="${product.sizes.?[size == 'S'].isEmpty() or product.sizes.?[size == 'S'][0].stockQuantity == 0}">
+                            S
+                        </button>
+
+                        <!-- M -->
+                        <button type="button"
+                                class="fk-size-button"
+                                data-size="M"
+                                th:classappend="${product.sizes.?[size == 'M'].isEmpty() or product.sizes.?[size == 'M'][0].stockQuantity == 0} ? ' out-of-stock' : ''"
+                                th:attr="data-stock=${product.sizes.?[size == 'M'].isEmpty() ? 0 : product.sizes.?[size == 'M'][0].stockQuantity}"
+                                th:disabled="${product.sizes.?[size == 'M'].isEmpty() or product.sizes.?[size == 'M'][0].stockQuantity == 0}">
+                            M
+                        </button>
+
+                        <!-- L -->
+                        <button type="button"
+                                class="fk-size-button"
+                                data-size="L"
+                                th:classappend="${product.sizes.?[size == 'L'].isEmpty() or product.sizes.?[size == 'L'][0].stockQuantity == 0} ? ' out-of-stock' : ''"
+                                th:attr="data-stock=${product.sizes.?[size == 'L'].isEmpty() ? 0 : product.sizes.?[size == 'L'][0].stockQuantity}"
+                                th:disabled="${product.sizes.?[size == 'L'].isEmpty() or product.sizes.?[size == 'L'][0].stockQuantity == 0}">
+                            L
+                        </button>
+
+                        <!-- XL -->
+                        <button type="button"
+                                class="fk-size-button"
+                                data-size="XL"
+                                th:classappend="${product.sizes.?[size == 'XL'].isEmpty() or product.sizes.?[size == 'XL'][0].stockQuantity == 0} ? ' out-of-stock' : ''"
+                                th:attr="data-stock=${product.sizes.?[size == 'XL'].isEmpty() ? 0 : product.sizes.?[size == 'XL'][0].stockQuantity}"
+                                th:disabled="${product.sizes.?[size == 'XL'].isEmpty() or product.sizes.?[size == 'XL'][0].stockQuantity == 0}">
+                            XL
+                        </button>
+
+                        <!-- XXL -->
+                        <button type="button"
+                                class="fk-size-button"
+                                data-size="XXL"
+                                th:classappend="${product.sizes.?[size == 'XXL'].isEmpty() or product.sizes.?[size == 'XXL'][0].stockQuantity == 0} ? ' out-of-stock' : ''"
+                                th:attr="data-stock=${product.sizes.?[size == 'XXL'].isEmpty() ? 0 : product.sizes.?[size == 'XXL'][0].stockQuantity}"
+                                th:disabled="${product.sizes.?[size == 'XXL'].isEmpty() or product.sizes.?[size == 'XXL'][0].stockQuantity == 0}">
+                            XXL
+                        </button>
+
+                    </div>
+
+                    <!-- Low Stock Message -->
+                    <div id="fk-size-stock-message"
+                         class="fk-size-stock-message">
+                    </div>
+
+                    <!-- Selected Size -->
+                    <input type="hidden"
+                           id="selectedSize"
+                           name="size"
+                           value="">
+
+                </div>
+
+                <!-- CART MESSAGES -->
+                <div id="fk-cart-success"
+                     class="fk-cart-message fk-cart-success"
+                     th:text="${success != null ? success : ''}"
+                     role="status"
+                     aria-live="polite">
+                </div>
+
+                <div id="fk-cart-error"
+                     class="fk-cart-message fk-cart-error"
+                     th:text="${error != null ? error : ''}"
+                     role="alert"
+                     aria-live="assertive">
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="fk-actions">
+
+                    <!-- Wishlist -->
+                    <button type="button" class="fk-wishlist">
+                        <i class="bi bi-heart"></i>
+                        Add to Wishlist
+                    </button>
+
+                    <!-- Add To Cart -->
+                    <form th:action="@{/cart/add}"
+                          method="post"
+                          class="fk-cart-form"
+                          id="fk-cart-form">
+
+                        <input type="hidden"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}">
+
+                        <input type="hidden"
+                               name="productId"
+                               th:value="${product.id}">
+
+                        <input type="hidden"
+                               name="size"
+                               id="cartSelectedSize"
+                               value="">
+
+                        <input type="hidden"
+                               name="quantity"
+                               value="1">
+
+                        <button type="submit" class="fk-cart">
+                            Add to Cart
+                        </button>
+
+                    </form>
+                </div>
+
+                <!-- Buy Now -->
+                <button type="button" class="fk-buy-now">
+                    Buy Now
+                </button>
+
+                <!-- PRODUCT DESCRIPTION -->
+                <div class="fk-description">
+
+                    <h3>Product Details</h3>
+
+                    <div id="productDescriptionContent"
+                         th:text="${product.description}">
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer class="fk-category-footer">
+
+    <div class="container">
+
+        <div class="row g-4">
+
+            <!-- Brand -->
+            <div class="col-lg-4">
+                <h4>FashionKart</h4>
+
+                <p>
+                    Discover fashion that fits your style.
+                    Shop the latest trends for Women, Men and Kids.
+                </p>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="col-lg-2">
+                <h5>Quick Links</h5>
+
+                <a th:href="@{/}">Home</a>
+                <a th:href="@{/women}">Women</a>
+                <a th:href="@{/men}">Men</a>
+                <a th:href="@{/kids}">Kids</a>
+                <a th:href="@{/shop}">Shop All</a>
+            </div>
+
+            <!-- Customer Support -->
+            <div class="col-lg-3">
+                <h5>Customer Support</h5>
+
+                <a th:href="@{/contact}">Contact Us</a>
+                <a th:href="@{/shipping}">Shipping &amp; Delivery</a>
+                <a th:href="@{/returns}">Returns &amp; Refunds</a>
+            </div>
+
+            <!-- Contact -->
+            <div class="col-lg-3">
+                <h5>Contact Us</h5>
+
+                <p>
+                    Email:
+                    <a href="mailto:support@fashionkart.com">
+                        support@fashionkart.com
+                    </a>
+                </p>
+
+                <p>
+                    Phone: +91 XXXXX XXXXX
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Footer Bottom -->
+        <div class="fk-category-footer-bottom">
+            <p>© 2026 FashionKart. All rights reserved.</p>
+        </div>
+
+    </div>
+
+</footer>
+
+<!-- Bootstrap JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- =====================================================
+     PRODUCT DETAILS JAVASCRIPT
+     ===================================================== -->
+
+<script th:inline="javascript">
+document.addEventListener("DOMContentLoaded", function () {
+
+    // =========================================
+    // ADD TO CART - AJAX
+    // =========================================
+
+    const cartForm = document.getElementById("fk-cart-form");
+    const cartSuccess = document.getElementById("fk-cart-success");
+    const cartError = document.getElementById("fk-cart-error");
+
+    const cartSelectedSizeInput =
+        document.getElementById("cartSelectedSize");
+
+    function showCartError(message) {
+        if (cartError) {
+            cartError.textContent = message;
+        }
+
+        if (cartSuccess) {
+            cartSuccess.textContent = "";
+        }
+    }
+
+    function showCartSuccess(message) {
+        if (cartSuccess) {
+            cartSuccess.textContent = message;
+        }
+
+        if (cartError) {
+            cartError.textContent = "";
+        }
+    }
+
+    function updateNavbarCartCount(count) {
+
+        const navbarCartLink =
+            document.getElementById("navbar-cart-link");
+
+        if (!navbarCartLink) {
+            console.warn("Navbar cart link was not found.");
+            return;
+        }
+
+        let navbarCartCount =
+            document.getElementById("navbar-cart-count");
+
+        const safeCount = Math.max(0, Number(count) || 0);
+
+        if (safeCount > 0) {
+
+            // Create the badge when it does not exist yet.
+            if (!navbarCartCount) {
+
+                navbarCartCount = document.createElement("span");
+                navbarCartCount.id = "navbar-cart-count";
+                navbarCartCount.className = "navbar-cart-count";
+
+                navbarCartLink.appendChild(navbarCartCount);
+            }
+
+            navbarCartCount.textContent = safeCount;
+
+        } else if (navbarCartCount) {
+
+            // Hide the badge when the cart is empty.
+            navbarCartCount.remove();
+        }
+    }
+
+    if (cartForm) {
+
+        cartForm.addEventListener("submit", function (event) {
+
+            event.preventDefault();
+
+            if (cartSuccess) {
+                cartSuccess.textContent = "";
+            }
+
+            if (cartError) {
+                cartError.textContent = "";
+            }
+
+            // Validate size before sending the request.
+            const selectedSize = cartSelectedSizeInput
+                ? cartSelectedSizeInput.value.trim()
+                : "";
+
+            if (!selectedSize) {
+                showCartError("Please select a size before adding to cart.");
+                return;
+            }
+
+            const submitButton =
+                cartForm.querySelector('button[type="submit"]');
+
+            if (submitButton) {
+                submitButton.disabled = true;
+            }
+
+            const formData = new FormData(cartForm);
+
+            fetch(cartForm.action, {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(function (response) {
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Request failed with status " + response.status
+                    );
+                }
+
+                return response.text();
+            })
+            .then(function (html) {
+
+                const parser = new DOMParser();
+
+                const doc = parser.parseFromString(
+                    html,
+                    "text/html"
+                );
+
+                const serverSuccess =
+                    doc.querySelector("#fk-cart-success");
+
+                const serverError =
+                    doc.querySelector("#fk-cart-error");
+
+                const successMessage = serverSuccess
+                    ? serverSuccess.textContent.trim()
+                    : "";
+
+                const errorMessage = serverError
+                    ? serverError.textContent.trim()
+                    : "";
+
+                // A server-side error must not increase the badge.
+                if (errorMessage) {
+                    showCartError(errorMessage);
+                    return;
+                }
+
+                // Update the badge only after a confirmed success.
+                if (successMessage) {
+
+                    const serverCartLink =
+                        doc.querySelector("#navbar-cart-link");
+
+                    const serverCartCount =
+                        doc.querySelector("#navbar-cart-count");
+
+                    let updatedCount = null;
+
+                    // Prefer the count returned by the server.
+                    if (serverCartCount) {
+
+                        const parsedCount = parseInt(
+                            serverCartCount.textContent.trim(),
+                            10
+                        );
+
+                        if (!Number.isNaN(parsedCount)) {
+                            updatedCount = parsedCount;
+                        }
+                    }
+
+                    // If the server response has no badge because
+                    // the markup hides zero counts, use the current
+                    // count plus one for this successful quantity-1 add.
+                    if (updatedCount === null) {
+
+                        const currentBadge =
+                            document.getElementById(
+                                "navbar-cart-count"
+                            );
+
+                        const currentCount = currentBadge
+                            ? parseInt(
+                                currentBadge.textContent.trim(),
+                                10
+                            ) || 0
+                            : 0;
+
+                        updatedCount = currentCount + 1;
+                    }
+
+                    updateNavbarCartCount(updatedCount);
+                    showCartSuccess(successMessage);
+
+                    return;
+                }
+
+                // Do not assume success if the server returned
+                // neither a success message nor an error message.
+                showCartError(
+                    "We could not confirm that the item was added. Please check your cart."
+                );
+            })
+            .catch(function (error) {
+
+                console.error("Add to cart error:", error);
+
+                showCartError(
+                    "Unable to add this item right now. Please try again."
+                );
+            })
+            .finally(function () {
+
+                if (submitButton) {
+                    submitButton.disabled = false;
+                }
+            });
+        });
+    }
+
+    // =========================================
+    // PRODUCT DESCRIPTION PARSER
+    // =========================================
+
+    const descriptionElement =
+        document.getElementById("productDescriptionContent");
+
+    if (descriptionElement) {
+
+        const rawText = descriptionElement.textContent.trim();
+
+        if (rawText) {
+
+            let text = rawText;
+
+            const sections = [
+                "Product Details",
+                "Description",
+                "Kurta Design",
+                "Trousers Design",
+                "Size & Fit",
+                "Material & Care",
+                "Care Instructions",
+                "Specifications",
+                "Additional Information",
+                "Features",
+                "Occasion"
+            ];
+
+            // Insert line breaks before known section headings.
+            sections.forEach(function (section) {
+
+                const escapedSection = section.replace(
+                    /[.*+?^${}()|[\]\\]/g,
+                    "\\$&"
+                );
+
+                const regex = new RegExp(
+                    "\\s*" + escapedSection + "\\s*:?",
+                    "gi"
+                );
+
+                text = text.replace(
+                    regex,
+                    "\n\n" + section + ":\n"
+                );
+            });
+
+            const lines = text
+                .split(/\n+/)
+                .map(line => line.trim())
+                .filter(line => line.length > 0);
+
+            descriptionElement.innerHTML = "";
+
+            const specificationLabels = [
+                "Sleeve Length",
+                "Top Shape",
+                "Top Type",
+                "Bottom Type",
+                "Dupatta",
+                "Top Pattern",
+                "Top Design Styling",
+                "Top Hemline",
+                "Top Length",
+                "Neck",
+                "Bottom Pattern",
+                "Bottom Closure",
+                "Waistband",
+                "Ornamentation",
+                "Weave Pattern",
+                "Weave Type",
+                "Pattern Coverage",
+                "Dupatta Pattern",
+                "Dupatta Border",
+                "Number of Items",
+                "Package Contains"
+            ];
+
+            function createSection(title) {
+
+                const section = document.createElement("div");
+                section.className = "fk-detail-section";
+
+                const heading = document.createElement("h4");
+                heading.textContent = title;
+
+                section.appendChild(heading);
+                descriptionElement.appendChild(section);
+
+                return section;
+            }
+
+            function isSectionHeading(line) {
+
+                return sections.some(function (section) {
+
+                    return line
+                        .replace(/:$/, "")
+                        .trim()
+                        .toLowerCase() === section.toLowerCase();
+                });
+            }
+
+            function getSpecificationLabel(line) {
+
+                return specificationLabels.find(function (label) {
+
+                    return line
+                        .replace(/:$/, "")
+                        .trim()
+                        .toLowerCase() === label.toLowerCase();
+                });
+            }
+
+            let currentSection = createSection("Description");
+            let i = 0;
+
+            while (i < lines.length) {
+
+                const line = lines[i];
+
+                if (
+                    line.toLowerCase() === "product details:" ||
+                    line.toLowerCase() === "product details"
+                ) {
+                    i++;
+                    continue;
+                }
+
+                if (isSectionHeading(line)) {
+
+                    const title = line.replace(/:$/, "").trim();
+
+                    currentSection = createSection(title);
+
+                    i++;
+                    continue;
+                }
+
+                const currentHeading =
+                    currentSection.querySelector("h4");
+
+                if (
+                    currentHeading &&
+                    currentHeading.textContent.toLowerCase() ===
+                    "specifications"
+                ) {
+
+                    const label = getSpecificationLabel(line);
+
+                    if (label && i + 1 < lines.length) {
+
+                        const value = lines[i + 1];
+
+                        let specifications =
+                            currentSection.querySelector(
+                                ".fk-specifications"
+                            );
+
+                        if (!specifications) {
+
+                            specifications =
+                                document.createElement("div");
+
+                            specifications.className =
+                                "fk-specifications";
+
+                            currentSection.appendChild(
+                                specifications
+                            );
+                        }
+
+                        const row =
+                            document.createElement("div");
+
+                        row.className =
+                            "fk-specification-row";
+
+                        const labelElement =
+                            document.createElement("div");
+
+                        labelElement.className =
+                            "fk-specification-label";
+
+                        labelElement.textContent = label;
+
+                        const valueElement =
+                            document.createElement("div");
+
+                        valueElement.className =
+                            "fk-specification-value";
+
+                        valueElement.textContent = value;
+
+                        row.appendChild(labelElement);
+                        row.appendChild(valueElement);
+
+                        specifications.appendChild(row);
+
+                        i += 2;
+                        continue;
+                    }
+                }
+
+                const paragraph =
+                    document.createElement("p");
+
+                paragraph.textContent = line;
+
+                currentSection.appendChild(paragraph);
+
+                i++;
+            }
+
+            // =========================================
+            // SPECIFICATIONS: READ MORE / READ LESS
+            // =========================================
+
+            const specificationSection =
+                Array.from(
+                    document.querySelectorAll(".fk-detail-section")
+                ).find(function (section) {
+
+                    const heading = section.querySelector("h4");
+
+                    return heading &&
+                        heading.textContent.trim().toLowerCase() ===
+                        "specifications";
+                });
+
+            if (specificationSection) {
+
+                const specificationRows =
+                    specificationSection.querySelectorAll(
+                        ".fk-specification-row"
+                    );
+
+                if (specificationRows.length > 5) {
+
+                    specificationRows.forEach(function (row, index) {
+
+                        if (index >= 5) {
+                            row.classList.add(
+                                "fk-hidden-specification"
+                            );
+                        }
+                    });
+
+                    const readMoreButton =
+                        document.createElement("button");
+
+                    readMoreButton.type = "button";
+                    readMoreButton.className = "fk-read-more-btn";
+                    readMoreButton.textContent = "Read More";
+
+                    specificationSection.appendChild(
+                        readMoreButton
+                    );
+
+                    readMoreButton.addEventListener(
+                        "click",
+                        function () {
+
+                            const isExpanded =
+                                readMoreButton.textContent === "Read Less";
+
+                            specificationRows.forEach(
+                                function (row, index) {
+
+                                    if (index >= 5) {
+
+                                        if (isExpanded) {
+
+                                            row.classList.add(
+                                                "fk-hidden-specification"
+                                            );
+
+                                        } else {
+
+                                            row.classList.remove(
+                                                "fk-hidden-specification"
+                                            );
+                                        }
+                                    }
+                                }
+                            );
+
+                            readMoreButton.textContent =
+                                isExpanded ? "Read More" : "Read Less";
+                        }
+                    );
+                }
+            }
+        }
+    }
+
+    // =========================================
+    // PRICE FORMATTING
+    // =========================================
+
+    const currentPriceElement =
+        document.querySelector(".fk-current-price");
+
+    if (currentPriceElement) {
+
+        const currentPrice = parseFloat(
+            currentPriceElement.textContent
+                .replace("₹", "")
+                .trim()
+        );
+
+        if (!Number.isNaN(currentPrice)) {
+
+            currentPriceElement.textContent =
+                "₹" + Math.round(currentPrice).toLocaleString("en-IN");
+        }
+    }
+
+    const originalPriceElement =
+        document.querySelector(".fk-original-price");
+
+    if (originalPriceElement) {
+
+        const originalPrice = parseFloat(
+            originalPriceElement.textContent
+                .replace("₹", "")
+                .trim()
+        );
+
+        if (!Number.isNaN(originalPrice)) {
+
+            originalPriceElement.textContent =
+                "₹" + Math.round(originalPrice).toLocaleString("en-IN");
+        }
+    }
+
+    const discountElement =
+        document.querySelector(".fk-discount");
+
+    if (discountElement) {
+
+        const discount = parseFloat(
+            discountElement.textContent
+                .replace("% OFF", "")
+                .trim()
+        );
+
+        if (!Number.isNaN(discount)) {
+            discountElement.textContent = discount + "% OFF";
+        }
+    }
+
+    // =========================================
+    // PRODUCT COLOR
+    // =========================================
+
+    const colorNameElement =
+        document.getElementById("productColorName");
+
+    const colorCircle =
+        document.getElementById("productColorCircle");
+
+    if (colorNameElement && colorCircle) {
+
+        const colorName =
+            colorNameElement.textContent.trim().toLowerCase();
+
+        const colorMap = {
+            "black": "#000000",
+            "white": "#FFFFFF",
+            "red": "#D32F2F",
+            "blue": "#1565C0",
+            "navy blue": "#18243A",
+            "navy": "#18243A",
+            "sky blue": "#5DADE2",
+            "royal blue": "#4169E1",
+            "green": "#2E7D32",
+            "olive": "#808000",
+            "mint green": "#98D8C8",
+            "yellow": "#F4D03F",
+            "mustard": "#D4A017",
+            "orange": "#E67E22",
+            "peach": "#F5B7A1",
+            "pink": "#E91E63",
+            "baby pink": "#F4C2C2",
+            "purple": "#7B1FA2",
+            "lavender": "#A78BBA",
+            "brown": "#795548",
+            "dark brown": "#4E342E",
+            "beige": "#D6C2A1",
+            "cream": "#FFF1D0",
+            "grey": "#808080",
+            "gray": "#808080",
+            "dark grey": "#4A4A4A",
+            "light grey": "#D3D3D3",
+            "maroon": "#800000",
+            "wine": "#722F37",
+            "burgundy": "#800020",
+            "teal": "#008080",
+            "turquoise": "#40E0D0",
+            "gold": "#D4AF37",
+            "silver": "#C0C0C0"
+        };
+
+        colorCircle.style.backgroundColor =
+            colorMap[colorName] || "#CCCCCC";
+    }
+
+    // =========================================
+    // PRODUCT THUMBNAIL CLICK
+    // =========================================
+
+    const thumbnails =
+        document.querySelectorAll(".fk-thumbnail");
+
+    const mainProductImage =
+        document.getElementById("fk-main-product-image");
+
+    thumbnails.forEach(function (thumbnail) {
+
+        thumbnail.addEventListener("click", function () {
+
+            const thumbnailImage =
+                thumbnail.querySelector("img");
+
+            if (!thumbnailImage || !mainProductImage) {
+                return;
+            }
+
+            mainProductImage.src = thumbnailImage.src;
+
+            thumbnails.forEach(function (item) {
+                item.classList.remove("active");
+            });
+
+            thumbnail.classList.add("active");
+        });
+    });
+
+    // =========================================
+    // PRODUCT SIZE SELECTION
+    // =========================================
+
+    const sizeButtons =
+        document.querySelectorAll(".fk-size-button");
+
+    const stockMessage =
+        document.getElementById("fk-size-stock-message");
+
+    const selectedSizeInput =
+        document.getElementById("selectedSize");
+
+    sizeButtons.forEach(function (button) {
+
+        button.addEventListener("click", function () {
+
+            if (button.disabled) {
+                return;
+            }
+
+            // Clicking the selected size again deselects it.
+            if (button.classList.contains("selected")) {
+
+                button.classList.remove("selected");
+                button.blur();
+
+                if (selectedSizeInput) {
+                    selectedSizeInput.value = "";
+                }
+
+                if (cartSelectedSizeInput) {
+                    cartSelectedSizeInput.value = "";
+                }
+
+                if (stockMessage) {
+                    stockMessage.textContent = "";
+                    stockMessage.classList.remove("show");
+                }
+
+                return;
+            }
+
+            // Clear the previous selection.
+            sizeButtons.forEach(function (btn) {
+                btn.classList.remove("selected");
+            });
+
+            button.classList.add("selected");
+
+            const selectedSize =
+                button.getAttribute("data-size");
+
+            const stock = parseInt(
+                button.getAttribute("data-stock"),
+                10
+            ) || 0;
+
+            if (selectedSizeInput) {
+                selectedSizeInput.value = selectedSize;
+            }
+
+            if (cartSelectedSizeInput) {
+                cartSelectedSizeInput.value = selectedSize;
+            }
+
+            // Show the low-stock message.
+            if (stock > 0 && stock <= 3) {
+
+                if (stockMessage) {
+
+                    stockMessage.textContent =
+                        "Hurry! Only " + stock +
+                        " item" + (stock === 1 ? "" : "s") +
+                        " left";
+
+                    stockMessage.classList.add("show");
+                }
+
+            } else if (stockMessage) {
+
+                stockMessage.textContent = "";
+                stockMessage.classList.remove("show");
+            }
+
+            // Clear any previous size validation error.
+            if (cartError) {
+                cartError.textContent = "";
+            }
+        });
+    });
+
+});
+</script>
+
+</body>
+</html>

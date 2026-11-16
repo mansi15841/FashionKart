@@ -1,0 +1,351 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Checkout | FashionKart</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Satisfy&display=swap"
+        rel="stylesheet">
+
+    <!-- FashionKart CSS -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="checkout-address-page">
+        <div class="checkout-container">
+
+            <!-- Checkout Progress -->
+            <div class="checkout-progress" aria-label="Checkout progress">
+
+                <div class="checkout-step completed">
+                    <div class="checkout-step-circle">
+                        <i class="bi bi-cart3"></i>
+                    </div>
+                    <span>Cart</span>
+                </div>
+
+                <div class="checkout-step-line"></div>
+
+                <div class="checkout-step active">
+                    <div class="checkout-step-circle">
+                        <i class="bi bi-geo-alt"></i>
+                    </div>
+                    <span>Address</span>
+                </div>
+
+                <div class="checkout-step-line"></div>
+
+                <div class="checkout-step">
+                    <div class="checkout-step-circle">
+                        <i class="bi bi-credit-card"></i>
+                    </div>
+                    <span>Payment</span>
+                </div>
+
+            </div>
+
+            <!-- Main Layout -->
+            <div class="checkout-address-layout">
+
+                <!-- LEFT: Saved Addresses -->
+                <section class="checkout-address-left">
+
+                    <h2 class="address-section-title">
+                        Select Delivery Address
+                    </h2>
+
+                    <div
+                        th:if="${#lists.isEmpty(addresses)}"
+                        class="no-addresses-message">
+
+                        <p class="mb-1">
+                            You haven't saved any addresses yet.
+                        </p>
+
+                        <p class="mb-0">
+                            Add an address to continue.
+                        </p>
+                    </div>
+
+                    <!-- Address selection form -->
+                    <form
+                        id="checkoutAddressForm"
+                        th:action="@{/checkout/address/select}"
+                        method="post">
+
+                        <input
+                            type="hidden"
+                            th:name="${_csrf.parameterName}"
+                            th:value="${_csrf.token}">
+
+                        <input
+                            type="hidden"
+                            id="selectedAddressId"
+                            name="addressId"
+                            th:value="${selectedAddressId}">
+
+                        <div
+                            class="saved-addresses-grid"
+                            th:unless="${#lists.isEmpty(addresses)}">
+
+                            <div
+                                class="saved-address-card"
+                                th:each="address : ${addresses}"
+                                th:attr="data-address-id=${address.id}"
+                                th:classappend="${selectedAddressId != null and selectedAddressId == address.id} ? ' selected' : ''"
+                                role="button"
+                                tabindex="0"
+                                th:attrappend="aria-pressed=${selectedAddressId != null and selectedAddressId == address.id}">
+
+                                <h3 th:text="${address.addressType}">
+                                    Home
+                                </h3>
+
+                                <p
+                                    class="address-name"
+                                    th:text="${address.fullName}">
+                                    Customer Name
+                                </p>
+
+                                <p th:text="${address.phone}">
+                                    Phone Number
+                                </p>
+
+                                <p th:text="${address.address}">
+                                    Street Address
+                                </p>
+
+                                <p>
+                                    <span th:text="${address.city}">City</span>,
+                                    <span th:text="${address.state}">State</span>
+                                    - <span th:text="${address.pincode}">000000</span>
+                                </p>
+
+                                <span
+                                    class="default-address-label"
+                                    th:if="${address.defaultaddress}">
+                                    Default Address
+                                </span>
+
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Add New Address -->
+                    <div class="add-checkout-address-section">
+
+                        <h2>Add a New Address</h2>
+
+                        <p>
+                            Need a different delivery location? Add a new
+                            address to your FashionKart account.
+                        </p>
+
+                        <a
+                            th:href="@{/add-address}"
+                            class="add-new-address-btn">
+                            + Add New Address
+                        </a>
+
+                    </div>
+
+                </section>
+
+                <!-- RIGHT: Price Details -->
+                <aside class="checkout-price-details">
+
+                    <h2>Price Details</h2>
+
+                    <div class="price-detail-row">
+                        <span>Total MRP</span>
+
+                        <strong
+                            th:text="${'₹' + #numbers.formatDecimal(totalMrp, 1, 2)}">
+                            ₹0.00
+                        </strong>
+                    </div>
+
+                    <div class="price-detail-row">
+                        <span>Discount on MRP</span>
+
+                        <strong
+                            class="price-discount"
+                            th:text="${'- ₹' + #numbers.formatDecimal(totalDiscount, 1, 2)}">
+                            - ₹0.00
+                        </strong>
+                    </div>
+
+                    <div class="price-detail-row">
+                        <span>Shipping Charges</span>
+
+                        <strong
+                            class="price-shipping"
+                            th:if="${shippingCharges == 0}">
+                            FREE
+                        </strong>
+
+                        <strong
+                            th:unless="${shippingCharges == 0}"
+                            th:text="${'₹' + #numbers.formatDecimal(shippingCharges, 1, 2)}">
+                            ₹100.00
+                        </strong>
+                    </div>
+
+                    <div class="price-summary-divider"></div>
+
+                    <div class="price-total-row">
+                        <span>Total Amount</span>
+
+                        <strong
+                            th:text="${'₹' + #numbers.formatDecimal(totalAmount, 1, 2)}">
+                            ₹0.00
+                        </strong>
+                    </div>
+
+                    <button
+                        type="submit"
+                        form="checkoutAddressForm"
+                        id="continueCheckoutButton"
+                        class="continue-checkout-btn"
+                        disabled>
+                        Continue
+                        <i class="bi bi-arrow-right ms-1"></i>
+                    </button>
+
+                    <a
+                        th:href="@{/cart}"
+                        class="checkout-back-link">
+                        <i class="bi bi-arrow-left"></i>
+                        Back to Cart
+                    </a>
+
+                </aside>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Address Selection -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const addressCards = document.querySelectorAll(
+                ".checkout-address-page .saved-address-card"
+            );
+
+            const selectedAddressInput = document.getElementById(
+                "selectedAddressId"
+            );
+
+            const continueButton = document.getElementById(
+                "continueCheckoutButton"
+            );
+
+            function selectAddress(card) {
+
+                const clickedId = card.dataset.addressId;
+                const currentlySelectedId = selectedAddressInput.value;
+
+                // Clicking the selected address again unselects it.
+                if (currentlySelectedId === clickedId) {
+                    selectedAddressInput.value = "";
+                } else {
+                    selectedAddressInput.value = clickedId;
+                }
+
+                // Update address highlights.
+                addressCards.forEach(function (addressCard) {
+
+                    const isSelected =
+                        addressCard.dataset.addressId ===
+                        selectedAddressInput.value;
+
+                    addressCard.classList.toggle("selected", isSelected);
+
+                    addressCard.setAttribute(
+                        "aria-pressed",
+                        String(isSelected)
+                    );
+                });
+
+                // Continue requires a selected address.
+                continueButton.disabled =
+                    !selectedAddressInput.value;
+            }
+
+            addressCards.forEach(function (card) {
+
+                card.addEventListener("click", function () {
+                    selectAddress(card);
+                });
+
+                card.addEventListener("keydown", function (event) {
+
+                    if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        selectAddress(card);
+                    }
+                });
+            });
+
+            // Restore the selected state if an address was previously saved.
+            addressCards.forEach(function (card) {
+
+                const isSelected =
+                    card.dataset.addressId === selectedAddressInput.value;
+
+                card.classList.toggle("selected", isSelected);
+
+                card.setAttribute(
+                    "aria-pressed",
+                    String(isSelected)
+                );
+            });
+
+            continueButton.disabled =
+                !selectedAddressInput.value;
+
+            // Prevent submission without a selected address.
+            document.getElementById("checkoutAddressForm")
+                .addEventListener("submit", function (event) {
+
+                    if (!selectedAddressInput.value) {
+                        event.preventDefault();
+                        continueButton.disabled = true;
+                    }
+                });
+        });
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+</body>
+</html>

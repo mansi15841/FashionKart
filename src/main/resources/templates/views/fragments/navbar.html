@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<!-- ==============================
+     NAVBAR
+============================== -->
+
+<nav th:fragment="navbar"
+     class="navbar navbar-expand-lg bg-white shadow-sm">
+
+    <div class="container">
+
+        <!-- Brand -->
+
+        <a class="navbar-brand fw-bold"
+           th:href="@{/}">
+
+            FashionKart
+
+        </a>
+
+        <!-- Mobile Toggle -->
+
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarContent">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+        <!-- Navbar Content -->
+
+        <div class="collapse navbar-collapse"
+             id="navbarContent">
+
+            <!-- Menu -->
+
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+
+                <li class="nav-item">
+
+                    <a class="nav-link"
+                       th:href="@{/}">
+
+                        Home
+
+                    </a>
+
+                </li>
+
+                <li class="nav-item">
+
+                    <a class="nav-link"
+                       th:classappend="${category != null and category == 'Women'} ? ' active' : ''"
+                       th:href="@{/women}">
+
+                        Women
+
+                    </a>
+
+                </li>
+
+                <li class="nav-item">
+
+                    <a class="nav-link"
+                       th:classappend="${category != null and category == 'Men'} ? ' active' : ''"
+                       th:href="@{/men}">
+
+                        Men
+
+                    </a>
+
+                </li>
+
+                <li class="nav-item">
+
+                    <a class="nav-link"
+                       th:classappend="${category != null and category == 'Kids'} ? ' active' : ''"
+                       th:href="@{/kids}">
+
+                        Kids
+
+                    </a>
+
+                </li>
+
+                <li class="nav-item">
+
+                    <a class="nav-link" th:href="@{/sale}">Sale</a>
+
+                </li>
+
+            </ul>
+
+            <!-- Right Side -->
+
+            <div class="d-flex align-items-center gap-3">
+
+                <!-- Search Box -->
+			
+			<form
+			    th:action="@{/search}"
+			    method="get"
+			    class="navbar-search">
+			
+			    <div class="navbar-search-box">
+			
+			        <input
+			            type="text"
+			            name="keyword"
+			            placeholder="Search products..."
+			            autocomplete="off">
+			
+			        <button
+			            type="submit"
+			            class="navbar-search-btn"
+			            aria-label="Search">
+			
+			            <i class="bi bi-search"></i>
+			
+			        </button>
+			
+			    </div>
+			
+			</form>
+
+                <!-- Account Dropdown -->
+
+                <div class="dropdown">
+
+                    <a href="#"
+                       class="text-decoration-none dropdown-toggle"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+
+                        Account
+
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+
+                        <li>
+
+                            <a class="dropdown-item"
+                               th:href="@{/login}">
+
+                                Login & Signup
+
+                            </a>
+
+                        </li>
+
+                        <li>
+
+                            <hr class="dropdown-divider">
+
+                        </li>
+
+                        <li>
+
+                            <a class="dropdown-item"
+                               th:href="@{/profile}">
+
+                                My Profile
+
+                            </a>
+
+                        </li>
+
+                        <li>
+
+                            <a class="dropdown-item"
+                               th:href="@{/orders}">
+
+                                My Orders
+
+                            </a>
+
+                        </li>
+
+                        <li>
+
+                            <hr class="dropdown-divider">
+
+                        </li>
+
+                        <li>
+
+                            <a class="dropdown-item"
+                               th:href="@{/admin/login}">
+
+                                Admin Login
+
+                            </a>
+
+                        </li>
+
+                        <li>
+
+                            <form th:action="@{/logout}"
+                                  method="post">
+
+                                <button type="submit"
+                                        class="dropdown-item">
+
+                                    Logout
+
+                                </button>
+
+                            </form>
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+				<!-- Cart -->
+				<a th:href="@{/cart}"
+				   class="text-decoration-none"
+				   id="navbar-cart-link">
+				
+				    Cart
+				
+				    <span th:if="${cartItemCount != null and cartItemCount > 0}"
+				          id="navbar-cart-count"
+				          class="navbar-cart-count"
+				          th:text="${cartItemCount}">
+				    </span>
+				
+				</a>
+                
+
+            </div>
+
+        </div>
+
+    </div>
+
+</nav>
+
+</body>
+</html>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>User Details - FashionKart Admin</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+
+<body>
+
+<div class="admin-wrapper">
+
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+
+        <div class="admin-logo">
+            <h2>FashionKart</h2>
+            <span>ADMIN PANEL</span>
+        </div>
+
+        <nav class="admin-nav">
+
+            <a th:href="@{/admin/dashboard}">
+                <span>Dashboard</span>
+            </a>
+
+            <a th:href="@{/admin/products}">
+                <span>Products</span>
+            </a>
+
+            <a th:href="@{/admin/orders}">
+                <span>Orders</span>
+            </a>
+
+            <a th:href="@{/admin/users}" class="active">
+                <span>Users</span>
+            </a>
+
+        </nav>
+
+        <div class="admin-sidebar-bottom">
+
+            <a th:href="@{/}">
+                <span>View Store</span>
+            </a>
+
+            <form th:action="@{/logout(loginType='admin')}"
+                  method="post"
+                  class="admin-logout-form">
+
+                <button type="submit">
+                    <span>Logout</span>
+                </button>
+
+            </form>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-main">
+
+        <!-- PAGE HEADER -->
+        <div class="admin-page-header">
+
+            <div>
+
+                <a th:href="@{/admin/users}" class="admin-back-link">
+                    ← Back to Users
+                </a>
+
+                <h1>User Details</h1>
+
+                <p>View customer account information</p>
+
+            </div>
+
+        </div>
+
+
+        <!-- USER INFORMATION -->
+        <div class="admin-user-details-grid">
+
+            <!-- PROFILE CARD -->
+            <div class="admin-user-details-card">
+
+                <div class="admin-user-details-profile">
+
+                    <div class="admin-user-details-avatar"
+                         th:text="${user.fullName != null and !user.fullName.isEmpty()
+                                   ? #strings.substring(user.fullName, 0, 1).toUpperCase()
+                                   : 'U'}">
+                        U
+                    </div>
+
+                    <div>
+
+                        <h2 th:text="${user.fullName}">
+                            Customer Name
+                        </h2>
+
+                        <p th:text="${user.email}">
+                            customer@example.com
+                        </p>
+
+                        <span class="admin-user-status active">
+                            Active
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ACCOUNT INFORMATION -->
+            <div class="admin-user-details-card">
+
+                <div class="admin-user-details-card-header">
+                    <h3>Account Information</h3>
+                </div>
+
+                <div class="admin-user-details-info">
+
+                    <div>
+                        <span>User ID</span>
+                        <strong th:text="'USR' + ${user.id}">USR1</strong>
+                    </div>
+
+                    <div>
+                        <span>Username</span>
+                        <strong th:text="${user.fullName}">Customer Name</strong>
+                    </div>
+
+                    <div>
+                        <span>Email</span>
+                        <strong th:text="${user.email}">customer@example.com</strong>
+                    </div>
+
+                    <div>
+                        <span>Phone</span>
+                        <strong th:text="${user.contact != null ? user.contact : 'Not provided'}">
+                            Not provided
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Registered On</span>
+
+                        <strong th:if="${user.createdAt != null}"
+                                th:text="${#temporals.format(user.createdAt, 'dd MMM yyyy')}">
+                            Registration date
+                        </strong>
+
+                        <strong th:unless="${user.createdAt != null}">
+                            Not available
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Account Status</span>
+                        <strong>Active</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- DELIVERY ADDRESSES -->
+        <div class="admin-user-details-card">
+
+            <div class="admin-user-details-card-header">
+                <h3>Delivery Addresses</h3>
+            </div>
+
+            <div class="admin-user-address"
+                 th:each="address : ${user.addresses}">
+
+                <strong th:text="${address.fullName}">
+                    Recipient Name
+                </strong>
+
+                <p>
+                    <span th:text="${address.address}">Street address</span><br>
+
+                    <span th:text="${address.city}">City</span>,
+
+                    <span th:text="${address.state}">State</span>
+
+                    - <span th:text="${address.pincode}">Pincode</span>
+                </p>
+
+                <p>
+                    <strong>Phone:</strong>
+                    <span th:text="${address.phone}">Phone number</span>
+                </p>
+
+                <p th:if="${address.addressType != null}">
+                    <strong>Address Type:</strong>
+                    <span th:text="${address.addressType}">Home</span>
+                </p>
+
+                <p th:if="${address.defaultaddress}">
+                    <span class="admin-user-status active">
+                        Default Address
+                    </span>
+                </p>
+
+            </div>
+
+            <div class="admin-user-address"
+                 th:if="${#lists.isEmpty(user.addresses)}">
+
+                <p>No delivery addresses have been added by this customer.</p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ORDER SUMMARY -->
+        <div class="admin-user-orders-summary">
+
+            <div class="admin-users-card">
+                <span>Total Orders</span>
+                <strong th:text="${totalOrders}">0</strong>
+            </div>
+
+            <div class="admin-users-card">
+                <span>Delivered</span>
+                <strong th:text="${deliveredOrders}">0</strong>
+            </div>
+
+            <div class="admin-users-card">
+                <span>Processing</span>
+                <strong th:text="${processingOrders}">0</strong>
+            </div>
+
+            <div class="admin-users-card">
+                <span>Total Spent</span>
+                <strong th:text="${'₹' + #numbers.formatDecimal(totalSpent, 1, 2)}">
+                    ₹0.00
+                </strong>
+            </div>
+
+        </div>
+
+
+        <!-- RECENT ORDERS -->
+        <div class="admin-user-details-card">
+
+            <div class="admin-user-details-card-header">
+
+                <div>
+                    <h3>Recent Orders</h3>
+                    <p>Customer's latest orders</p>
+                </div>
+
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="admin-table">
+
+                    <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    <tr th:each="order : ${orders}">
+
+                        <td>
+                            <strong th:text="${order.orderNumber}">
+                                FK00001
+                            </strong>
+                        </td>
+
+                        <td>
+                            <span th:if="${order.orderDate != null}"
+                                  th:text="${#temporals.format(order.orderDate, 'dd MMM yyyy')}">
+                                Order date
+                            </span>
+                        </td>
+
+                        <td th:text="${order.items != null
+                                      ? #aggregates.sum(order.items.![quantity])
+                                      : 0}">
+                            0
+                        </td>
+
+                        <td th:text="${'₹' + #numbers.formatDecimal(order.totalAmount, 1, 2)}">
+                            ₹0.00
+                        </td>
+
+                        <td>
+                            <span class="admin-order-status"
+                                  th:classappend="${#strings.toLowerCase(order.orderStatus)}"
+                                  th:text="${order.orderStatus}">
+                                Processing
+                            </span>
+                        </td>
+
+                        <td>
+                            <a th:href="@{/admin/order-detail(id=${order.orderNumber})}"
+                               class="admin-view-btn">
+                                View
+                            </a>
+                        </td>
+
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(orders)}">
+                        <td colspan="6" class="text-center py-4">
+                            This customer has not placed any orders yet.
+                        </td>
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>
